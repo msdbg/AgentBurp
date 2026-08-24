@@ -55,6 +55,17 @@ the primary user is an AI agent giving CLI commands and consuming structured JSO
 | **Ops** | Jobs, audit logs, notes, project dashboard |
 
 ---
+## Try it out
+
+Windows (PowerShell)
+```bash
+iwr https://github.com/msdbg/AgentBurp/releases/latest/download/agentburp-windows-amd64.exe -OutFile agentburp.exe; .\agentburp.exe project create demo; .\agentburp.exe scope add "example.com" --include; .\agentburp.exe crawl start https://example.com --max-pages 20 --json; .\agentburp.exe scan passive --all --json; .\agentburp.exe findings list --json
+```
+Linux
+```bash
+wget -q https://github.com/msdbg/AgentBurp/releases/latest/download/agentburp-linux-amd64 -O agentburp && chmod +x agentburp && ./agentburp project create demo && ./agentburp scope add "example.com" --include && ./agentburp crawl start https://example.com --max-pages 20 --json && ./agentburp scan passive --all --json && ./agentburp findings list --json
+```
+Replace example.com / https://example.com with your-target.com / https://your-target.com. For subdomains use *.example.com
 
 ## Install
 
