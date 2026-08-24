@@ -1,0 +1,33 @@
+# Binaries — root executables only (gauntlet/ source is tracked)
+*.exe
+*.exe~
+/agentburp
+/gauntlet
+!gauntlet/
+!gauntlet/**
+dist/
+
+# Generated reports (reproduce via: agentburp report generate)
+*-report.md
+*-report.html
+*-report.json
+*-report.sarif
+
+# Dev artifacts
+*.log
+current_test_proj.txt
+implementationplan.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Go
+vendor/
