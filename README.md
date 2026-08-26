@@ -55,7 +55,7 @@ the primary user is an AI agent giving CLI commands and consuming structured JSO
 | **Ops** | Jobs, audit logs, notes, project dashboard |
 
 ---
-## Try it out
+## Try in any Agentic terminal
 
 Windows (PowerShell)
 ```bash
