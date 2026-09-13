@@ -36,6 +36,26 @@ func projectCreateCmd() *cobra.Command {
   agentburp project create webapp-pentest --json`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			name := args[0]
+			if flagDryRun {
+				dir := core.ProjectDir(name)
+				dbPath := core.ProjectDBPath(name)
+				exists := false
+				if _, err := os.Stat(dbPath); err == nil {
+					exists = true
+				} else if _, err := os.Stat(dir); err == nil {
+					exists = true
+				}
+				output.DryRun(map[string]interface{}{
+					"action":           "project.create",
+					"name":             name,
+					"path":             dir,
+					"db":               dbPath,
+					"would_create":     true,
+					"would_set_active": true,
+					"already_exists":   exists,
+				})
+				return nil
+			}
 			dbPath := core.ProjectDBPath(name)
 
 			if err := os.MkdirAll(core.ProjectDir(name), 0o755); err != nil {
@@ -90,6 +110,20 @@ func projectOpenCmd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			name := args[0]
+			if flagDryRun {
+				dbPath := core.ProjectDBPath(name)
+				if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+					return fmt.Errorf("project %q not found at %s", name, core.ProjectDir(name))
+				}
+				output.DryRun(map[string]interface{}{
+					"action":           "project.open",
+					"name":             name,
+					"path":             core.ProjectDir(name),
+					"db":               dbPath,
+					"would_set_active": true,
+				})
+				return nil
+			}
 			dbPath := core.ProjectDBPath(name)
 
 			if _, err := os.Stat(dbPath); os.IsNotExist(err) {
@@ -192,6 +226,27 @@ func projectDeleteCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			name := args[0]
 			dir := core.ProjectDir(name)
+
+			if flagDryRun {
+				if _, err := os.Stat(dir); os.IsNotExist(err) {
+					return fmt.Errorf("project %q not found", name)
+				}
+				mode := "trash"
+				summary := map[string]interface{}{
+					"action":       "project.delete",
+					"name":         name,
+					"path":         dir,
+					"mode":         mode,
+					"would_delete": name,
+				}
+				if force {
+					summary["mode"] = "permanent"
+				} else {
+					summary["trash_path"] = dir + ".deleted"
+				}
+				output.DryRun(summary)
+				return nil
+			}
 
 			if _, err := os.Stat(dir); os.IsNotExist(err) {
 				return fmt.Errorf("project %q not found", name)
